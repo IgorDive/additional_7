@@ -7,7 +7,7 @@ module.exports = function solveSudoku(matrix) {
   let stackInsertedElem = [[0, 0, 0, 0]];
   let attempts = 0;
   let counterAttempts = 1;
-  let cycleBrecker = false;
+  let cycleBreaker = false;
   let tempQueue = [];
   
   start(); //start condition
@@ -46,7 +46,7 @@ module.exports = function solveSudoku(matrix) {
     let counter = 0;
     
     for ( let c = 0; c < 9 - topElemOfElemFrequenceArr[1]; c++ ) {
-      if ( cycleBrecker ) break;
+      if ( cycleBreaker ) break;
       makeArrOfExistingElemForCondition(topElemOfElemFrequenceArr[0]);
 
  out: for ( let j = 0; j < newMatrix.length; j++ ){
@@ -55,7 +55,7 @@ module.exports = function solveSudoku(matrix) {
           if ( arrOfExistingElemForCondition.map( (arrJ) => arrJ[1] ).some( (item) => { if ( i === item) return true } ) || newMatrix[j][i] !== 0 || arrOfExistingElemForCondition.some( (arrJ) => { if ( arrJ[3] === Math.floor( i / 3 ) && arrJ[4] === Math.floor( j / 3 ) ) return true } ) ) continue;
           if ( attempts ) { 
             if ( attempts === 1 ) counterAttempts++;
-            cycleBrecker = true;
+            cycleBreaker = true;
             attempts--;
             continue; 
           }  
@@ -63,7 +63,7 @@ module.exports = function solveSudoku(matrix) {
           counterAttempts = 1;
           stackInsertedElem.push( [topElemOfElemFrequenceArr[0], i, j, counterAttempts] );
           newMatrix[j][i] = topElemOfElemFrequenceArr[0];
-          cycleBrecker = false;
+          cycleBreaker = false;
           counter++;
           break out;
         }
@@ -75,7 +75,7 @@ module.exports = function solveSudoku(matrix) {
       tempQueue.forEach( arr => newMatrix[arr[2]][arr[1]] = 0 );
       counterAttempts = stackInsertedElem[stackInsertedElem.length - 1][3];
       attempts = counterAttempts;
-      cycleBrecker = false;
+      cycleBreaker = false;
       elemFrequence = [[1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0],[8, 0],[9, 0]];
       start();
     }
