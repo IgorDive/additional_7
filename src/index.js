@@ -9,6 +9,7 @@ module.exports = function solveSudoku(matrix) {
   let counterAttempts = 1;
   let cycleBreaker = false;
   let tempQueue = [];
+  let checkPointer = 0;
   
   start(); //start condition
 
@@ -46,7 +47,10 @@ module.exports = function solveSudoku(matrix) {
     let counter = 0;
     
     for ( let c = 0; c < 9 - topElemOfElemFrequenceArr[1]; c++ ) {
-      if ( cycleBreaker ) break;
+      if ( cycleBreaker ) {
+      //console.log( `decrease stack` );        
+      break;
+      }
       makeArrOfExistingElemForCondition(topElemOfElemFrequenceArr[0]);
 
  out: for ( let j = 0; j < newMatrix.length; j++ ){
@@ -64,6 +68,9 @@ module.exports = function solveSudoku(matrix) {
           stackInsertedElem.push( [topElemOfElemFrequenceArr[0], i, j, counterAttempts] );
           newMatrix[j][i] = topElemOfElemFrequenceArr[0];
           cycleBreaker = false;
+          //console.log( `insert ${ [topElemOfElemFrequenceArr[0], i, j, counterAttempts] }` );
+          //stackInsertedElem.forEach( item => console.log( `+stack ${ item }` ) );
+          //newMatrix.forEach( item => console.log( `+newMatrix ${ item }` ) );
           counter++;
           break out;
         }
@@ -76,12 +83,14 @@ module.exports = function solveSudoku(matrix) {
       counterAttempts = stackInsertedElem[stackInsertedElem.length - 1][3];
       attempts = counterAttempts;
       cycleBreaker = false;
+      //console.log( `delete ${ tempQueue }` );
+      //stackInsertedElem.forEach( item => console.log( `-stack ${ item }` ) );
+      //newMatrix.forEach( item => console.log( `-newMatrix ${ item }` ) );
+      //console.log(checkPointer);
+      ++labelForCheck;
       elemFrequence = [[1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0],[8, 0],[9, 0]];
       start();
     }
-               
-    attempts = 0;
-    counterAttempts = 1;
   }
   
   function makeArrOfExistingElemForCondition(elemFrequenceI) {
