@@ -1,7 +1,5 @@
 module.exports = function solveSudoku( matrix ) {
   let newMatrix = JSON.parse( JSON.stringify( matrix ) ); 
-  //let sumHoriz = newMatrix.map( (arr) => arr.reduce( (prevVal, value) => prevVal += value ) );
-  //let sumVert = newMatrix.map( (arr, i, matr) => matr.reduce( (prevVal, arrSec) => prevVal += arrSec[i], 0 ) );
   let elemFrequence = [[1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0],[8, 0],[9, 0]];
   let arrOfExistingElemForCondition = [];
   let stackInsertedElem = [[0, 0, 0, 0]];
@@ -10,20 +8,20 @@ module.exports = function solveSudoku( matrix ) {
   let cycleBreaker = false;
   let tempQueue = [];
   let elemFrequenceFiltered = [];
-  let labelCheck = 2000;
+  let labelCheck = true;
   let flag = false;
+  let devtool = 0;
   
    
-  while ( labelCheck === 2000 ) {
-    labelCheck = 0;
-    elemFrequence = [[1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0],[8, 0],[9, 0]];
+  while ( labelCheck === true ) {
+    labelCheck = false;
     start();
     if ( flag ) break;
   }
   
   return newMatrix;
-
-
+  
+  
   function start() {
     newMatrix.forEach( (item) => {
       item.forEach( (itm) => {
@@ -57,8 +55,8 @@ module.exports = function solveSudoku( matrix ) {
       if ( solveSud( elemFrequenceFiltered[y] ) ) break;
     }
     
-    if ( labelCheck !== 2000 ) flag = true;
-    labelCheck = 2000;
+    if ( !labelCheck ) flag = true;
+    labelCheck = true;
   }
 
 
@@ -66,7 +64,10 @@ module.exports = function solveSudoku( matrix ) {
     let counter = 0;
     
     for ( let c = 0; c < 9 - topElemOfElemFrequenceArr[1]; c++ ) {
-      if ( cycleBreaker ) break;
+      
+      if ( cycleBreaker ) {
+        break;
+      }
 
       makeArrOfExistingElemForCondition(topElemOfElemFrequenceArr[0]);
 
@@ -85,9 +86,6 @@ module.exports = function solveSudoku( matrix ) {
           stackInsertedElem.push( [topElemOfElemFrequenceArr[0], i, j, counterAttempts] );
           newMatrix[j][i] = topElemOfElemFrequenceArr[0];
           cycleBreaker = false;
-          //console.log( `insert ${ [topElemOfElemFrequenceArr[0], i, j, counterAttempts] }` );
-          //stackInsertedElem.forEach( item => console.log( `+stack ${ item }` ) );
-          //newMatrix.forEach( item => console.log( `+newMatrix ${ item }` ) );
           counter++;
           break out;
         }
@@ -100,18 +98,12 @@ module.exports = function solveSudoku( matrix ) {
       counterAttempts = stackInsertedElem[stackInsertedElem.length - 1][3];
       attempts = counterAttempts;
       cycleBreaker = false;
-      //console.log( `delete ${ tempQueue }` );
-      //stackInsertedElem.forEach( item => console.log( `-stack ${ item }` ) );
-      //newMatrix.forEach( item => console.log( `-newMatrix ${ item }` ) );
-      //console.log(checkPointer);
-      ++labelCheck;
-
-      if (labelCheck === 2000) return true;
-
+      ++devtool;
+      labelCheck = true;
       elemFrequence = [[1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0],[8, 0],[9, 0]];
-      start();
+      return true;
     }
-    return (labelCheck === 2000 )? true: false;
+    return ( labelCheck )? true: false;
   }
 
   function makeArrOfExistingElemForCondition(elemFrequenceI) {
@@ -122,6 +114,5 @@ module.exports = function solveSudoku( matrix ) {
       }
     }
   };
-
 
 };
