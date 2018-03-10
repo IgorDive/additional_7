@@ -3,6 +3,8 @@ module.exports = function solveSudoku( matrix ) {
   let elemFrequence = [[1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0],[8, 0],[9, 0]];
   let arrOfExistingElemForCondition = [];
   let stackInsertedElem = [[0, 0, 0, 0]];
+  let arrOfPossibleVariantsOfElem = [];
+  let cuttedStackArr = [];
   let attempts = 0;
   let counterAttempts = 1;
   let cycleBreaker = false;
@@ -17,6 +19,7 @@ module.exports = function solveSudoku( matrix ) {
     labelCheck = false;
     start();
     if ( flag ) break;
+    if ( devtool > 2100000 ) break;
   }
   
   return newMatrix;
@@ -62,6 +65,8 @@ module.exports = function solveSudoku( matrix ) {
 
   function solveSud(topElemOfElemFrequenceArr) {
     let counter = 0;
+    let arrOfExistingElemForConditionMapped1 = [];
+    let arrOfExistingElemForConditionMapped2 = [];
     
     for ( let c = 0; c < 9 - topElemOfElemFrequenceArr[1]; c++ ) {
       
@@ -70,11 +75,13 @@ module.exports = function solveSudoku( matrix ) {
       }
 
       makeArrOfExistingElemForCondition(topElemOfElemFrequenceArr[0]);
+      arrOfExistingElemForConditionMapped2 = arrOfExistingElemForCondition.map( (arrJ) => arrJ[2] );
+      arrOfExistingElemForConditionMapped1 = arrOfExistingElemForCondition.map( (arrJ) => arrJ[1] );
 
  out: for ( let j = 0; j < newMatrix.length; j++ ){
-        if ( arrOfExistingElemForCondition.map( (arrJ) => arrJ[2] ).some( (item) => { if ( j === item) return true } ) ) continue;
+        if ( arrOfExistingElemForConditionMapped2.some( (item) => { if ( j === item) return true } ) ) continue;
         for ( let i = 0; i < newMatrix[j].length; i++ ){
-          if ( arrOfExistingElemForCondition.map( (arrJ) => arrJ[1] ).some( (item) => { if ( i === item) return true } ) || newMatrix[j][i] !== 0 || arrOfExistingElemForCondition.some( (arrJ) => { if ( arrJ[3] === Math.floor( i / 3 ) && arrJ[4] === Math.floor( j / 3 ) ) return true } ) ) continue;
+          if ( arrOfExistingElemForConditionMapped1.some( (item) => { if ( i === item) return true } ) || newMatrix[j][i] !== 0 || arrOfExistingElemForCondition.some( (arrJ) => { if ( arrJ[3] === Math.floor( i / 3 ) && arrJ[4] === Math.floor( j / 3 ) ) return true } ) ) continue;
           if ( attempts ) { 
             if ( attempts === 1 ) counterAttempts++;
             cycleBreaker = true;
@@ -91,7 +98,7 @@ module.exports = function solveSudoku( matrix ) {
         }
       }
     }
-
+    
     if ( counter < 9 - topElemOfElemFrequenceArr[1] ) {
       tempQueue = stackInsertedElem.splice( -1 );
       tempQueue.forEach( arr => newMatrix[arr[2]][arr[1]] = 0 );
@@ -103,6 +110,29 @@ module.exports = function solveSudoku( matrix ) {
       elemFrequence = [[1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0],[8, 0],[9, 0]];
       return true;
     }
+     
+    cuttedStackArr = stackInsertedElem.filter( arr => arr[0] === topElemOfElemFrequenceArr[0] && true );
+
+    if ( arrOfPossibleVariantsOfElem.filter( arr => arr[0][0] === topElemOfElemFrequenceArr[0] ).length ) {
+      while ( arrOfPossibleVariantsOfElem[arrOfPossibleVariantsOfElem.length - 1][0][0] !== topElemOfElemFrequenceArr[0] ) {
+        arrOfPossibleVariantsOfElem.pop();
+      }
+      
+      if ( arrOfPossibleVariantsOfElem.some( arr => arr.every( subArr => cuttedStackArr.some( cutArr => subArr[1] === cutArr[1] && subArr[2] === cutArr[2] ) ) ) ) {
+        tempQueue = stackInsertedElem.splice( -1 );
+        tempQueue.forEach( arr => newMatrix[arr[2]][arr[1]] = 0 );
+        counterAttempts = stackInsertedElem[stackInsertedElem.length - 1][3];
+        attempts = counterAttempts;
+        cycleBreaker = false;
+        ++devtool;
+        labelCheck = true;
+        elemFrequence = [[1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0],[8, 0],[9, 0]];
+        return true;
+      }
+    }
+
+    arrOfPossibleVariantsOfElem.push( cuttedStackArr );
+
     return ( labelCheck )? true: false;
   }
 
