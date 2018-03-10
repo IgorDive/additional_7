@@ -1,4 +1,6 @@
 module.exports = function solveSudoku( matrix ) {
+  //let nameTimer;
+  //console.time( nameTimer );
   let newMatrix = JSON.parse( JSON.stringify( matrix ) ); 
   let elemFrequence = [[1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0],[8, 0],[9, 0]];
   let arrOfExistingElemForCondition = [];
@@ -12,6 +14,8 @@ module.exports = function solveSudoku( matrix ) {
   let elemFrequenceFiltered = [];
   let labelCheck = true;
   let flag = false;
+  let counterOfBegin = 0;
+  let counterOfStop = 0;
   let devtool = 0;
   
    
@@ -19,9 +23,12 @@ module.exports = function solveSudoku( matrix ) {
     labelCheck = false;
     start();
     if ( flag ) break;
-    if ( devtool > 2100000 ) break;
+    if ( devtool > 6000 ) break;
   }
   
+  //console.timeEnd( nameTimer );
+  //console.log( devtool );
+
   return newMatrix;
   
   
@@ -99,15 +106,18 @@ module.exports = function solveSudoku( matrix ) {
       }
     }
     
+    ++counterOfBegin;
+    ++devtool;
+
     if ( counter < 9 - topElemOfElemFrequenceArr[1] ) {
       tempQueue = stackInsertedElem.splice( -1 );
       tempQueue.forEach( arr => newMatrix[arr[2]][arr[1]] = 0 );
       counterAttempts = stackInsertedElem[stackInsertedElem.length - 1][3];
       attempts = counterAttempts;
       cycleBreaker = false;
-      ++devtool;
       labelCheck = true;
       elemFrequence = [[1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0],[8, 0],[9, 0]];
+
       return true;
     }
      
@@ -124,12 +134,33 @@ module.exports = function solveSudoku( matrix ) {
         counterAttempts = stackInsertedElem[stackInsertedElem.length - 1][3];
         attempts = counterAttempts;
         cycleBreaker = false;
-        ++devtool;
         labelCheck = true;
         elemFrequence = [[1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0],[8, 0],[9, 0]];
         return true;
       }
     }
+
+    /*
+    if ( counterOfBegin > 3000 ) {
+      newMatrix = JSON.parse( JSON.stringify( matrix ) ); 
+      arrOfPossibleVariantsOfElem = arrOfPossibleVariantsOfElem.filter( arr => arr[0][0] === arrOfPossibleVariantsOfElem[0][0][0] && true );
+      attempts = ++counterOfStop;
+      elemFrequence = [[1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0],[8, 0],[9, 0]];
+      arrOfExistingElemForCondition = [];
+      stackInsertedElem = [[0, 0, 0, 0]];
+      cuttedStackArr = [];
+      counterAttempts = 1;
+      cycleBreaker = false;
+      tempQueue = [];
+      elemFrequenceFiltered = [];
+      labelCheck = true;
+      flag = false;
+      counterOfBegin = 0;
+      devtool = 0;
+
+      return true;
+    }
+*/
 
     arrOfPossibleVariantsOfElem.push( cuttedStackArr );
 
