@@ -23,7 +23,7 @@ module.exports = function solveSudoku( matrix ) {
     labelCheck = false;
     start();
     if ( flag ) break;
-    if ( devtool > 6000 ) break;
+    if ( devtool > 34400 ) break;
   }
   
   //console.timeEnd( nameTimer );
